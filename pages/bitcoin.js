@@ -1,9 +1,16 @@
 import React from "react";
+import {withScreenSize} from '@vx/responsive'
+import { LinearGradient } from '@vx/gradient'
 
 function Background({width, height}) {
   return (
     <svg width={width} height={height}>
-      <rect width={width} height={height} fill="steelblue" />
+      <LinearGradient id="fill" vertical={false}>
+        <stop stopColor="#a943e4" offset="0%" />
+        <stop stopColor="#f55989" offset="50%" />
+        <stop stopColor="#ffaf84" offset="100%" />
+      </LinearGradient>
+      <rect width={width} height={height} fill="url(#fill)" />
     </svg>
   );
 }
@@ -14,10 +21,11 @@ class App extends React.Component {
   };
 
   render() {
+    const { screenWidth, screenHeight } = this.props
     const { data } = this.state;
     return (
       <div>
-        <Background width={100} height={100} />
+        <Background width={screenWidth} height={screenHeight} />
         <style jsx>{`
           .app {
             display: flex;
@@ -33,4 +41,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default withScreenSize(App);
