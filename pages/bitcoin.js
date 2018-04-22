@@ -2,6 +2,7 @@ import React from "react";
 import { withScreenSize } from "@vx/responsive";
 import { LinearGradient } from "@vx/gradient";
 import Chart from "../components/chart";
+import formatPrice from "../utils/formatPrice";
 
 function Background({ width, height }) {
   return (
@@ -36,21 +37,47 @@ class App extends React.Component {
   render() {
     const { screenWidth, screenHeight } = this.props;
     const { data } = this.state;
+    if (!data.bpi) return <div>loading...</div>;
     console.log(data);
+    const prices = Object.keys(data.bpi).map(k => {
+      return {
+        time: k,
+        price: data.bpi[k]
+      };
+    });
+    const currentPrice = prices[prices.length - 1].price;
+    const firstPrice = prices[0].price;
+    const diffPrice = currentPrice - firstPrice;
+    const hasIncreased = diffPrice > 0;
 
     return (
       <div>
         <Background width={screenWidth} height={screenHeight} />
         <div className="center">
           <div className="chart">
-            <div className="title">Bitcoin Price</div>
+            <div className="titlebar">
+              <div className="title">
+                <div>Bitcoin Price</div>
+                <div>
+                  <small>last 30 days</small>
+                </div>
+              </div>
+              <div className="spacer" />
+              <div className="prices">
+                <div>{formatPrice(currentPrice)}</div>
+                <div className={hasIncreased ? "increased" : "decreased"}>
+                  <small>
+                    {hasIncreased ? "+" : "-"}
+                    {formatPrice(diffPrice)}
+                  </small>
+                </div>
+              </div>
+            </div>
             <div className="container">
               <Chart data={data} />
             </div>
           </div>
-          <p className="disclaimer">
-            {data.disclaimer}
-          </p>
+          <p className="disclaimer">{data.disclaimer}</p>
         </div>
         <style jsx>{`
           .app,
@@ -67,10 +94,35 @@ class App extends React.Component {
             font-family: arial;
             flex-direction: column;
           }
-          
+
           .container {
             flex: 1;
             display: flex;
+          }
+
+          .title {
+            padding: 15px;
+          }
+
+          .spacer {
+            flex: 1;
+          }
+
+          .increased {
+            color: #00f1a1;
+          }
+
+          .prices {
+            align-items: flex-end;
+            display: flex;
+            flex-direction: column;
+          }
+
+          .titlebar {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 15px;
           }
 
           .chart {
@@ -79,7 +131,7 @@ class App extends React.Component {
             background-color: #27273f;
             border-radius: 8px;
             color: white;
-            display: flex; 
+            display: flex;
             flex-direction: column;
           }
 
