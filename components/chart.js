@@ -1,7 +1,7 @@
 import { withParentSize } from "@vx/responsive";
 import { scaleTime, scaleLinear } from "@vx/scale";
-import { linePath } from "@vx/shape";
-import LinePath from "@vx/shape/build/shapes/LinePath";
+import { LinePath, AreaClosed } from "@vx/shape";
+import { LinearGradient } from "@vx/gradient";
 
 function Chart({ data, parentWidth, parentHeight }) {
   const margin = {
@@ -32,6 +32,14 @@ function Chart({ data, parentWidth, parentHeight }) {
   return (
     <div>
       <svg width={width} height={height}>
+        <LinearGradient
+          id="area-fill"
+          from="#4682b4"
+          to="#4682b4"
+          fromOpacity={0.3}
+          toOpacity={0}
+        />
+        <AreaClosed data={data} x={x} y={y} yScale={yScale} xScale={xScale} fill="url(#area-fill)" stroke="transparent"/>
         <LinePath data={data} x={x} y={y} yScale={yScale} xScale={xScale} />
       </svg>
     </div>
